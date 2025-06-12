@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Model Training Interface</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+:root {
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --text-muted: rgba(255, 255, 255, 0.5);
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --success-gradient: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+    --danger-gradient: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0a0e27;
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Animated Background Shapes */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+    animation: backgroundShift 20s ease-in-out infinite;
+}
+
+@keyframes backgroundShift {
+    0%, 100% { transform: translateX(0) translateY(0); }
+    25% { transform: translateX(-20px) translateY(-10px); }
+    50% { transform: translateX(20px) translateY(10px); }
+    75% { transform: translateX(-10px) translateY(20px); }
+}
+
+.floating-shapes {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.shape {
+    position: absolute;
+    opacity: 0.1;
+    animation: float 20s infinite linear;
+}
+
+.shape:nth-child(1) {
+    top: 20%;
+    left: 20%;
+    width: 80px;
+    height: 80px;
+    background: var(--primary-gradient);
+    border-radius: 50%;
+    animation-delay: 0s;
+}
+
+.shape:nth-child(2) {
+    top: 60%;
+    right: 20%;
+    width: 120px;
+    height: 120px;
+    background: var(--secondary-gradient);
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    animation-delay: -7s;
+}
+
+.shape:nth-child(3) {
+    bottom: 20%;
+    left: 30%;
+    width: 100px;
+    height: 100px;
+    background: var(--accent-gradient);
+    border-radius: 0 50% 0 50%;
+    animation-delay: -14s;
+}
+
+@keyframes float {
+    0% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+    100% { transform: translateY(0) rotate(360deg); }
+}
+
+.training-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    position: relative;
+}
+
+/* Header */
+.training-container h2 {
+    font-size: 3rem;
+    font-weight: 700;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.training-container h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: var(--primary-gradient);
+    border-radius: 2px;
+}
+
+/* Training Options */
+.training-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.option-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.option-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--primary-gradient);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.option-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.option-card:hover::before {
+    opacity: 0.1;
+}
+
+.option-card.selected {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.option-card.selected::before {
+    opacity: 0.15;
+}
+
+.option-card h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.option-card p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.option-card ul {
+    list-style: none;
+}
+
+.option-card ul li {
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.option-card ul li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #667eea;
+    font-weight: bold;
+}
+
+/* Manual Parameters */
+.manual-params {
+    display: none;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.manual-params h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.param-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.param-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.param-input label {
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.param-input select,
+.param-input input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    color: var(--text-primary);
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.param-input select:focus,
+.param-input input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Training Button */
+.train-btn {
+    width: 100%;
+    background: var(--primary-gradient);
+    border: none;
+    border-radius: 16px;
+    padding: 1rem 2rem;
+    color: white;
+    font-family: inherit;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.train-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.train-btn:hover::before {
+    left: 100%;
+}
+
+.train-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+}
+
+.train-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Training Progress */
+.training-progress {
+    display: none;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.training-progress h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--primary-gradient);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    position: relative;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+#progress-text {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+/* Enhanced Training Log */
+.training-log {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    height: 200px;
+    overflow-y: auto;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.training-log::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), transparent);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.log-entry {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.log-entry:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.log-entry .log-icon {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+}
+
+.log-entry .log-timestamp {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    flex-shrink: 0;
+    min-width: 60px;
+}
+
+.log-entry .log-message {
+    flex: 1;
+}
+
+.log-entry.info .log-icon::before {
+    content: '\f05a';
+    font-family: 'Font Awesome 6 Free';
+    color: #4facfe;
+}
+
+.log-entry.success .log-icon::before {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    color: #56ab2f;
+}
+
+.log-entry.warning .log-icon::before {
+    content: '\f071';
+    font-family: 'Font Awesome 6 Free';
+    color: #ffd43b;
+}
+
+.log-entry.error .log-icon::before {
+    content: '\f00d';
+    font-family: 'Font Awesome 6 Free';
+    color: #ff416c;
+}
+
+/* Loss Chart */
+.loss-chart {
+    width: 100%;
+    height: 250px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    margin-bottom: 1rem;
+}
+
+#loss-image {
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Category Results */
+.category-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.category-results h3 {
+    grid-column: 1 / -1;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    background: var(--success-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.category-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.category-card h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.9rem;
+}
+
+.metric:last-child {
+    border-bottom: none;
+}
+
+.metric.improved {
+    color: #56ab2f;
+}
+
+.metric.degraded {
+    color: #ff416c;
+}
+
+/* Scrollbar Styling */
+.training-log::-webkit-scrollbar {
+    width: 6px;
+}
+
+.training-log::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.training-log::-webkit-scrollbar-thumb {
+    background: var(--primary-gradient);
+    border-radius: 3px;
+}
+
+.training-log::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-gradient);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .training-container {
+        padding: 20px 15px;
+    }
+    
+    .training-container h2 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .training-options {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .option-card {
+        padding: 1.5rem;
+    }
+    
+    .param-group {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .category-results {
+        grid-template-columns: 1fr;
+    }
+    
+    .loss-chart {
+        height: 200px;
+    }
+}
+</style>
+</head>
+
+<body>
+    <div class="floating-shapes">
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+</div>
+    <div class="training-container">
+        <h2>🤖 Model Training Dashboard</h2>
+
+        <div class="training-options">
+            <div class="option-card" id="auto-option" onclick="selectOption('auto')">
+                <h3>🔮 Automatic Training</h3>
+                <p>Let AI find the best hyperparameters automatically using grid search and validation.</p>
+                <ul>
+                    <li>Hyperparameter tuning</li>
+                    <li>Cross-validation</li>
+                    <li>Best model selection</li>
+                </ul>
+            </div>
+
+            <div class="option-card" id="manual-option" onclick="selectOption('manual')">
+                <h3>⚙️ Manual Training</h3>
+                <p>Configure training parameters manually for fine-tuned control.</p>
+                <ul>
+                    <li>Custom parameters</li>
+                    <li>Direct control</li>
+                    <li>Experimentation</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="manual-params" id="manual-params">
+            <h3>Training Parameters</h3>
+            <div class="param-group">
+                <div class="param-input">
+                    <label>LSTM Units</label>
+                    <select id="lstm-units">
+                        <option value="32">32</option>
+                        <option value="64" selected>64</option>
+                        <option value="128">128</option>
+                        <option value="256">256</option>
+                    </select>
+                </div>
+                <div class="param-input">
+                    <label>Batch Size</label>
+                    <select id="batch-size">
+                        <option value="4">4</option>
+                        <option value="8" selected>8</option>
+                        <option value="16">16</option>
+                        <option value="32">32</option>
+                    </select>
+                </div>
+                <div class="param-input">
+                    <label>Learning Rate</label>
+                    <select id="learning-rate">
+                        <option value="0.0001">0.0001</option>
+                        <option value="0.0005">0.0005</option>
+                        <option value="0.001" selected>0.001</option>
+                        <option value="0.005">0.005</option>
+                    </select>
+                </div>
+            </div>
+            <div class="param-group">
+                <div class="param-input">
+                    <label>Epochs</label>
+                    <input type="number" id="epochs" value="100" min="10" max="500">
+                </div>
+                <div class="param-input">
+                    <label>Dropout Rate</label>
+                    <select id="dropout-rate">
+                        <option value="0.1">0.1</option>
+                        <option value="0.2" selected>0.2</option>
+                        <option value="0.3">0.3</option>
+                        <option value="0.4">0.4</option>
+                    </select>
+                </div>
+                <div class="param-input">
+                    <label>Validation Split</label>
+                    <select id="val-split">
+                        <option value="0.1">0.1</option>
+                        <option value="0.2" selected>0.2</option>
+                        <option value="0.3">0.3</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <button class="train-btn" id="start-training" onclick="startTraining()">
+            🚀 Start Training
+        </button>
+
+        <div class="training-progress" id="training-progress">
+            <h3>Training Progress</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div id="progress-text">Preparing training data...</div>
+
+            <div class="training-log" id="training-log"></div>
+
+            <canvas class="loss-chart" id="loss-chart"></canvas>
+            <img id="loss-image" src="/static/loss_chart.png" alt="Loss Chart"
+                style="margin-top: 20px; max-width: 100%; display: none;" />
+
+
+        </div>
+
+        <div class="category-results" id="category-results"></div>
+    </div>
+
+    <script>
+        let selectedOption = 'auto';
+        let trainingSocket = null;
+        let currentCategory = 0;
+        let totalCategories = 7;
+        let lastLogLength = 0; // Track last log length
+
+        function selectOption(option) {
+            selectedOption = option;
+            document.getElementById('auto-option').classList.remove('selected');
+            document.getElementById('manual-option').classList.remove('selected');
+            document.getElementById(option + '-option').classList.add('selected');
+            if (option === 'manual') {
+                document.getElementById('manual-params').style.display = 'block';
+            } else {
+                document.getElementById('manual-params').style.display = 'none';
+            }
+        }
+
+        function startTraining() {
+            lastLogLength = 0; // Reset log tracker
+            const params = {
+                mode: selectedOption
+            };
+            if (selectedOption === 'manual') {
+                params.lstm_units = parseInt(document.getElementById('lstm-units').value);
+                params.batch_size = parseInt(document.getElementById('batch-size').value);
+                params.learning_rate = parseFloat(document.getElementById('learning-rate').value);
+                params.epochs = parseInt(document.getElementById('epochs').value);
+                params.dropout_rate = parseFloat(document.getElementById('dropout-rate').value);
+                params.validation_split = parseFloat(document.getElementById('val-split').value);
+            }
+            document.getElementById('start-training').disabled = true;
+            document.getElementById('training-progress').style.display = 'block';
+            document.getElementById('category-results').innerHTML = '';
+            document.getElementById('training-log').innerHTML = '';
+            document.getElementById('progress-fill').style.width = '0%';
+            document.getElementById('progress-text').textContent = 'Preparing training data...';
+
+            // Start training process
+            fetch('/train_models_advanced', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(params)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        pollTrainingStatus();
+                    } else {
+                        addLog('Error: ' + data.error, 'error');
+                        document.getElementById('start-training').disabled = false;
+                    }
+                })
+                .catch(error => {
+                    addLog('Error: ' + error.message, 'error');
+                    document.getElementById('start-training').disabled = false;
+                });
+        }
+
+        function pollTrainingStatus() {
+            fetch('/training_status')
+                .then(response => response.json())
+                .then(data => {
+                    updateProgress(data);
+                    if (data.status !== 'completed' && data.status !== 'failed') {
+                        setTimeout(pollTrainingStatus, 1500);
+                    } else {
+                        resetTrainingButton();
+                    }
+                });
+        }
+
+        function updateProgress(data) {
+            const progress = (data.current_category / totalCategories) * 100;
+            document.getElementById('progress-fill').style.width = progress + '%';
+            document.getElementById('progress-text').textContent = data.message || 'Training in progress...';
+
+            // Only append new log entries
+            if (data.log && data.log.length > lastLogLength) {
+                for (let i = lastLogLength; i < data.log.length; i++) {
+                    addLog(data.log[i].message, data.log[i].type);
+                }
+                lastLogLength = data.log.length;
+            }
+
+            // Update loss chart if available
+            if (data.loss_data && data.loss_data.train_loss && data.loss_data.train_loss.length > 0) {
+                updateLossChart(data.loss_data);
+                document.getElementById('loss-image').style.display = 'none';
+            } else {
+                const img = document.getElementById('loss-image');
+                img.src = '/static/loss_chart.png?t=' + new Date().getTime();  // avoid caching
+                img.style.display = 'block';
+
+            }
+
+            if (data.status === 'completed') {
+                if (data.results) displayResults(data.results);
+                resetTrainingButton();
+            }
+        }
+
+function addLog(message, type = 'info') {
+    const log = document.getElementById('training-log');
+    const timestamp = new Date().toLocaleTimeString();
+    
+    const logEntry = document.createElement('div');
+    logEntry.className = `log-entry ${type}`;
+    
+    logEntry.innerHTML = `
+        <div class="log-icon"></div>
+        <div class="log-timestamp">${timestamp}</div>
+        <div class="log-message">${message}</div>
+    `;
+    
+    log.appendChild(logEntry);
+    log.scrollTop = log.scrollHeight;
+    
+    // Add completion celebration for success messages
+    if (type === 'success' && message.includes('completed')) {
+        setTimeout(() => {
+            showCompletionCelebration();
+        }, 500);
+    }
+}
+
+function showCompletionCelebration() {
+    // Create celebration overlay
+    const celebration = document.createElement('div');
+    celebration.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        animation: fadeIn 0.3s ease;
+    `;
+    
+    celebration.innerHTML = `
+        <div style="
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 3rem;
+            text-align: center;
+            animation: scaleIn 0.5s ease;
+        ">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🎉</div>
+            <h3 style="
+                font-size: 1.5rem;
+                font-weight: 600;
+                background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin-bottom: 0.5rem;
+            ">Training Complete!</h3>
+            <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 1.5rem;">
+                Your models have been successfully trained and optimized.
+            </p>
+            <button onclick="this.parentElement.parentElement.remove()" style="
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border: none;
+                border-radius: 12px;
+                padding: 0.75rem 1.5rem;
+                color: white;
+                font-family: inherit;
+                font-weight: 600;
+                cursor: pointer;
+                transition: transform 0.2s ease;
+            " onmouseover="this.style.transform='scale(1.05)'" 
+               onmouseout="this.style.transform='scale(1)'">
+                Continue
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(celebration);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (celebration.parentElement) {
+            celebration.remove();
+        }
+    }, 5000);
+}
+
+// ENHANCE THE displayResults FUNCTION - REPLACE THE EXISTING ONE
+function displayResults(results) {
+    const container = document.getElementById('category-results');
+    container.innerHTML = '<h3><i class="fas fa-trophy" style="margin-right: 0.5rem;"></i>Training Results</h3>';
+
+    results.forEach((result, index) => {
+        const card = document.createElement('div');
+        card.className = 'category-card';
+        card.style.animationDelay = `${index * 0.1}s`;
+
+        const improved = result.new_loss < result.old_loss;
+        const statusIcon = improved ? '✅' : '❌';
+        const statusText = improved ? 'Model Updated' : 'Kept Existing';
+        const improvementPercent = ((result.old_loss - result.new_loss) / result.old_loss * 100);
+
+        card.innerHTML = `
+            <h4>${statusIcon} ${result.category}</h4>
+            <div class="metric ${improved ? 'improved' : 'degraded'}">
+                <span><i class="fas fa-flag" style="margin-right: 0.5rem;"></i>Status:</span>
+                <span><strong>${statusText}</strong></span>
+            </div>
+            <div class="metric">
+                <span><i class="fas fa-chart-line" style="margin-right: 0.5rem;"></i>Old Loss:</span>
+                <span>${result.old_loss.toFixed(6)}</span>
+            </div>
+            <div class="metric">
+                <span><i class="fas fa-chart-area" style="margin-right: 0.5rem;"></i>New Loss:</span>
+                <span>${result.new_loss.toFixed(6)}</span>
+            </div>
+            <div class="metric ${improved ? 'improved' : 'degraded'}">
+                <span><i class="fas fa-arrow-${improved ? 'up' : 'down'}" style="margin-right: 0.5rem;"></i>Change:</span>
+                <span>${improvementPercent > 0 ? '+' : ''}${improvementPercent.toFixed(2)}%</span>
+            </div>
+            <div class="metric">
+                <span><i class="fas fa-clock" style="margin-right: 0.5rem;"></i>Training Time:</span>
+                <span>${result.training_time}s</span>
+            </div>
+            ${result.best_params ? `
+            <div style="
+                margin-top: 15px; 
+                padding: 10px; 
+                background: rgba(255, 255, 255, 0.05); 
+                border-radius: 8px; 
+                font-size: 12px; 
+                color: rgba(255, 255, 255, 0.7);
+            ">
+                <div style="font-weight: 600; margin-bottom: 5px;">
+                    <i class="fas fa-cog" style="margin-right: 0.5rem;"></i>Best Parameters:
+                </div>
+                <div>Units: ${result.best_params.units} | Batch: ${result.best_params.batch_size} | LR: ${result.best_params.learning_rate}</div>
+            </div>
+            ` : ''}
+        `;
+
+        container.appendChild(card);
+    });
+
+    // Enhanced completion message
+    addLog('🎉 Training pipeline completed successfully! All models have been evaluated and optimized.', 'success');
+    addLog(`📊 Results: ${results.filter(r => r.new_loss < r.old_loss).length}/${results.length} models improved`, 'info');
+}
+
+// ADD THESE STYLES FOR ANIMATIONS
+const additionalStyles = `
+    <style>
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .log-entry {
+            border-left: 3px solid transparent;
+        }
+        
+        .log-entry.info {
+            border-left-color: #4facfe;
+        }
+        
+        .log-entry.success {
+            border-left-color: #56ab2f;
+        }
+        
+        .log-entry.warning {
+            border-left-color: #ffd43b;
+        }
+        
+        .log-entry.error {
+            border-left-color: #ff416c;
+        }
+    </style>
+`;
+
+// INSERT THE ADDITIONAL STYLES INTO HEAD
+document.head.insertAdjacentHTML('beforeend', additionalStyles);
+
+        function updateLossChart(lossData) {
+            const canvas = document.getElementById('loss-chart');
+            const ctx = canvas.getContext('2d');
+            // Set fixed size for clarity
+            canvas.width = 600;
+            canvas.height = 200;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (!lossData.train_loss || lossData.train_loss.length === 0) return;
+            const maxLoss = Math.max(...lossData.train_loss, ...lossData.val_loss);
+            const minLoss = Math.min(...lossData.train_loss, ...lossData.val_loss);
+            const range = maxLoss - minLoss || 1;
+            // Draw axes
+            ctx.strokeStyle = '#666';
+            ctx.beginPath();
+            ctx.moveTo(40, 20);
+            ctx.lineTo(40, canvas.height - 30);
+            ctx.lineTo(canvas.width - 20, canvas.height - 30);
+            ctx.stroke();
+            // Draw training loss
+            ctx.strokeStyle = '#007bff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            lossData.train_loss.forEach((loss, i) => {
+                const x = 40 + (i * (canvas.width - 60) / (lossData.train_loss.length - 1));
+                const y = canvas.height - 30 - ((loss - minLoss) / range) * (canvas.height - 50);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+            // Draw validation loss
+            ctx.strokeStyle = '#dc3545';
+            ctx.beginPath();
+            lossData.val_loss.forEach((loss, i) => {
+                const x = 40 + (i * (canvas.width - 60) / (lossData.val_loss.length - 1));
+                const y = canvas.height - 30 - ((loss - minLoss) / range) * (canvas.height - 50);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+            // Legend
+            ctx.fillStyle = '#007bff';
+            ctx.fillRect(50, 30, 10, 10);
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.fillText('Training Loss', 65, 40);
+            ctx.fillStyle = '#dc3545';
+            ctx.fillRect(150, 30, 10, 10);
+            ctx.fillText('Validation Loss', 165, 40);
+        }
+
+        function displayResults(results) {
+            const container = document.getElementById('category-results');
+            container.innerHTML = '<h3>🎯 Training Results</h3>';
+
+            results.forEach(result => {
+                const card = document.createElement('div');
+                card.className = 'category-card';
+
+                const improved = result.new_loss < result.old_loss;
+                const statusIcon = improved ? '✅' : '❌';
+                const statusText = improved ? 'Model Updated' : 'Kept Existing';
+
+                card.innerHTML = `
+                    <h4>${statusIcon} ${result.category}</h4>
+                    <div class="metric ${improved ? 'improved' : 'degraded'}">
+                        <span>Status:</span>
+                        <span><strong>${statusText}</strong></span>
+                    </div>
+                    <div class="metric">
+                        <span>Old Loss:</span>
+                        <span>${result.old_loss.toFixed(6)}</span>
+                    </div>
+                    <div class="metric">
+                        <span>New Loss:</span>
+                        <span>${result.new_loss.toFixed(6)}</span>
+                    </div>
+                    <div class="metric ${improved ? 'improved' : 'degraded'}">
+                        <span>Improvement:</span>
+                        <span>${((result.old_loss - result.new_loss) / result.old_loss * 100).toFixed(2)}%</span>
+                    </div>
+                    <div class="metric">
+                        <span>Training Time:</span>
+                        <span>${result.training_time}s</span>
+                    </div>
+                    ${result.best_params ? `
+                    <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                        <strong>Best Parameters:</strong><br>
+                        Units: ${result.best_params.units}, 
+                        Batch: ${result.best_params.batch_size}, 
+                        LR: ${result.best_params.learning_rate}
+                    </div>
+                    ` : ''}
+                `;
+
+                container.appendChild(card);
+            });
+
+            addLog('Training completed successfully!', 'success');
+        }
+
+        // Initialize
+        selectOption('auto');
+    </script>
+    <script>
+        let trainingInProgress = false;
+
+        function startTraining() {
+            if (trainingInProgress) {
+                alert('Training already in progress. Please wait for completion.');
+                return;
+            }
+
+            const button = document.getElementById('start-training');
+            button.disabled = true;
+            button.textContent = 'Training...';
+            trainingInProgress = true;
+
+            const params = {
+                mode: selectedOption
+            };
+
+            if (selectedOption === 'manual') {
+                params.lstm_units = parseInt(document.getElementById('lstm-units').value);
+                params.batch_size = parseInt(document.getElementById('batch-size').value);
+                params.learning_rate = parseFloat(document.getElementById('learning-rate').value);
+                params.epochs = parseInt(document.getElementById('epochs').value);
+                params.dropout_rate = parseFloat(document.getElementById('dropout-rate').value);
+                params.validation_split = parseFloat(document.getElementById('val-split').value);
+            }
+
+            document.getElementById('training-progress').style.display = 'block';
+            document.getElementById('category-results').innerHTML = '';
+            document.getElementById('training-log').innerHTML = '';
+            document.getElementById('progress-fill').style.width = '0%';
+            document.getElementById('progress-text').textContent = 'Preparing training data...';
+
+            fetch('/train_models_advanced', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(params)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        pollTrainingStatus();
+                    } else {
+                        addLog('Error: ' + data.error, 'error');
+                        resetTrainingButton();
+                    }
+                })
+                .catch(error => {
+                    addLog('Error: ' + error.message, 'error');
+                    resetTrainingButton();
+                });
+        }
+
+        function resetTrainingButton() {
+            const button = document.getElementById('start-training');
+            button.disabled = false;
+            button.textContent = '🚀 Start Training';
+            trainingInProgress = false;
+        }
+
+        function pollTrainingStatus() {
+            fetch('/training_status')
+                .then(response => response.json())
+                .then(data => {
+                    updateProgress(data);
+                    if (data.status !== 'completed' && data.status !== 'failed') {
+                        setTimeout(pollTrainingStatus, 1500);
+                    } else {
+                        resetTrainingButton();
+                    }
+                });
+        }
+    </script>
+
+</body>
+
+</html>

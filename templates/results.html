@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Predictions - Smart Finance Tracker</title>
+<!-- Add these meta tags after the title tag -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0e27">
+<meta name="description" content="Smart Finance Tracker - AI-Powered Financial Predictions">
+
+<!-- Preload critical fonts -->
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style">
+<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+/* CSS Variables */
+:root {
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --text-muted: rgba(255, 255, 255, 0.5);
+    --bg-primary: #0a0e27;
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    --shadow-xl: 0 35px 60px -12px rgba(0, 0, 0, 0.4);
+}
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Animated Background Shapes */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(102, 126, 234, 0.1) 0%, transparent 70%),
+        radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.1) 0%, transparent 70%),
+        radial-gradient(circle at 40% 60%, rgba(240, 147, 251, 0.05) 0%, transparent 70%);
+    animation: backgroundShift 20s ease-in-out infinite;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    z-index: -1;
+    background: 
+        radial-gradient(circle at 30% 30%, rgba(102, 126, 234, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 70% 70%, rgba(245, 87, 108, 0.03) 0%, transparent 50%);
+    animation: floatingShapes 30s linear infinite;
+}
+
+@keyframes backgroundShift {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(-20px, -20px) rotate(1deg); }
+    66% { transform: translate(20px, -10px) rotate(-1deg); }
+}
+
+@keyframes floatingShapes {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(-20px, -20px) rotate(360deg); }
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Typography */
+h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px rgba(102, 126, 234, 0.3);
+    animation: titleGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes titleGlow {
+    from { filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.3)); }
+    to { filter: drop-shadow(0 0 30px rgba(118, 75, 162, 0.4)); }
+}
+
+h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+h2::before {
+    content: '';
+    width: 4px;
+    height: 20px;
+    background: var(--gradient-primary);
+    border-radius: 2px;
+}
+
+h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+/* Glass Cards */
+.health-score, .predictions, .budget-alerts, .anomalies, .recommendations {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.health-score::before, .predictions::before, .budget-alerts::before, 
+.anomalies::before, .recommendations::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--gradient-primary);
+    opacity: 0.5;
+}
+
+.health-score:hover, .predictions:hover, .budget-alerts:hover, 
+.anomalies:hover, .recommendations:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Health Score Styles */
+.score-display {
+    font-size: 4rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 1rem 0;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: scoreGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes scoreGlow {
+    from { filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.3)); }
+    to { filter: drop-shadow(0 0 20px rgba(118, 75, 162, 0.4)); }
+}
+
+.score-status {
+    text-align: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+.score-status.excellent {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+}
+
+.score-status.good {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+}
+
+.score-status.caution {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+}
+
+.score-status.warning {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+}
+
+/* Table Styles */
+.predictions-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.predictions-table th {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-primary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.predictions-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+}
+
+.predictions-table tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text-primary);
+}
+
+.total-row {
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.total-row td {
+    border-bottom: none !important;
+    color: var(--text-primary) !important;
+    font-weight: 600;
+}
+
+/* Confidence Indicators */
+.confidence-high {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.confidence-medium {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+}
+
+.confidence-low {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+/* Alert Styles */
+.alert, .anomaly {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.alert::before, .anomaly::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 16px 16px 0 0;
+}
+
+.alert.high::before, .anomaly.high::before {
+    background: var(--gradient-secondary);
+}
+
+.alert.medium::before, .anomaly.medium::before {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.alert.low::before, .anomaly.low::before {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.alert:hover, .anomaly:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+.alert p, .anomaly p {
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+}
+
+/* Recommendations */
+.recommendations ul {
+    list-style: none;
+    padding: 0;
+}
+
+.recommendations li {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+    position: relative;
+    padding-left: 3rem;
+}
+
+.recommendations li::before {
+    content: '\f058';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #10b981;
+    font-size: 1.1rem;
+}
+
+.recommendations li:hover {
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateX(5px);
+    color: var(--text-primary);
+}
+
+/* Action Buttons */
+.actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 3rem;
+}
+
+.actions a {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    text-decoration: none;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    min-width: 160px;
+    text-align: center;
+}
+
+.actions a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-primary);
+    transition: left 0.3s ease;
+    z-index: -1;
+}
+
+.actions a:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    color: white;
+}
+
+.actions a:hover::before {
+    left: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    h1 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .health-score, .predictions, .budget-alerts, .anomalies, .recommendations {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-radius: 20px;
+    }
+    
+    .score-display {
+        font-size: 3rem;
+    }
+    
+    .predictions-table {
+        font-size: 0.9rem;
+    }
+    
+    .predictions-table th,
+    .predictions-table td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .actions a {
+        width: 100%;
+        max-width: 280px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0.75rem;
+    }
+    
+    .health-score, .predictions, .budget-alerts, .anomalies, .recommendations {
+        padding: 1rem;
+        border-radius: 16px;
+    }
+    
+    .predictions-table th,
+    .predictions-table td {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.8rem;
+    }
+    
+    .score-display {
+        font-size: 2.5rem;
+    }
+    
+    .alert, .anomaly {
+        padding: 1rem;
+    }
+}
+
+/* Loading Animation */
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.loading {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Selection Styles */
+::selection {
+    background: rgba(102, 126, 234, 0.3);
+    color: var(--text-primary);
+}
+
+::-moz-selection {
+    background: rgba(102, 126, 234, 0.3);
+    color: var(--text-primary);
+}
+</style>
+</head>
+<body>
+    <div class="container">
+        <h1>Financial Prediction Report</h1>
+        
+        <div class="health-score">
+            <h2>Financial Health Score</h2>
+            <div class="score-display">{{ results.health_score }}/100</div>
+            {% if results.health_score > 80 %}
+                <div class="score-status excellent">Excellent</div>
+            {% elif results.health_score > 60 %}
+                <div class="score-status good">Good</div>
+            {% elif results.health_score > 40 %}
+                <div class="score-status caution">Caution</div>
+            {% else %}
+                <div class="score-status warning">Warning</div>
+            {% endif %}
+        </div>
+        
+        <div class="predictions">
+            <h2>Predicted Expenses (Next Month)</h2>
+            <table class="predictions-table">
+                <tr>
+                    <th>Category</th>
+                    <th>Predicted Amount</th>
+                    <th>Confidence</th>
+                    <th>Status</th>
+                </tr>
+                {% for category, amount in results.predictions.items() %}
+                    <tr>
+                        <td>{{ category }}</td>
+                        <td>₹{{ "%.2f"|format(amount) }}</td>
+                        <td>{{ "%.2f"|format(results.confidences[category]) }}</td>
+                        <td>
+                            {% if results.confidences[category] > 0.8 %}
+                                <span class="confidence-high">High</span>
+                            {% elif results.confidences[category] > 0.5 %}
+                                <span class="confidence-medium">Medium</span>
+                            {% else %}
+                                <span class="confidence-low">Low</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                <tr class="total-row">
+                    <td><strong>Total</strong></td>
+                    <td><strong>₹{{ "%.2f"|format(results.total_predicted) }}</strong></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+        
+        {% if results.budget_alerts %}
+            <div class="budget-alerts">
+                <h2>Budget Alerts</h2>
+                {% for category, alert in results.budget_alerts.items() %}
+                    <div class="alert {{ alert.severity.lower() }}">
+                        <h3>{{ category }}</h3>
+                        <p>Predicted: ₹{{ "%.2f"|format(alert.predicted) }}</p>
+                        <p>Budget: ₹{{ "%.2f"|format(alert.budget) }}</p>
+                        <p>Overage: {{ "%.1f"|format(alert.overage_pct) }}%</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        {% if results.lstm_anomalies %}
+            <div class="anomalies">
+                <h2>AI Anomaly Detection</h2>
+                {% for anomaly in results.lstm_anomalies %}
+                    <div class="anomaly {{ anomaly.severity.lower() }}">
+                        <h3>{{ anomaly.category }}</h3>
+                        <p>{{ anomaly.alert }}</p>
+                        <p>Confidence: {{ "%.2f"|format(anomaly.confidence) }}</p>
+                        <p>Anomaly Score: {{ "%.2f"|format(anomaly.anomaly_score) }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <div class="recommendations">
+            <h2>Recommendations</h2>
+            <ul>
+                {% for rec in results.recommendations %}
+                    <li>{{ rec }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="actions">
+            <a href="/dashboard">Back to Dashboard</a>
+            <a href="/developer">Developer Tools</a>
+        </div>
+    </div>
+    <script>
+// Add subtle scroll animations
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.health-score, .predictions, .budget-alerts, .anomalies, .recommendations');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    cards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(card);
+    });
+});
+</script>
+</body>
+</html>

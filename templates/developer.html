@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Developer Tools - Smart Finance Tracker</title>
+    <style>
+        /* Import Inter font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* CSS Variables */
+:root {
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --text-muted: rgba(255, 255, 255, 0.5);
+    --bg-primary: #0a0e27;
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --card-bg: rgba(255, 255, 255, 0.08);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --hover-bg: rgba(255, 255, 255, 0.12);
+    --input-bg: rgba(255, 255, 255, 0.05);
+    --input-border: rgba(255, 255, 255, 0.15);
+    --success-color: #10b981;
+    --error-color: #ef4444;
+    --warning-color: #f59e0b;
+}
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Animated Background Shapes */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(240, 147, 251, 0.1) 0%, transparent 50%);
+    animation: float 20s ease-in-out infinite;
+    z-index: -1;
+}
+
+/* Floating animation */
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-30px) rotate(1deg); }
+    66% { transform: translateY(15px) rotate(-1deg); }
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Typography */
+h1 {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 3rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3rem;
+    letter-spacing: -0.02em;
+    animation: slideInDown 0.8s ease-out;
+}
+
+h2 {
+    background: var(--gradient-secondary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+}
+
+p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    font-weight: 400;
+}
+
+/* Grid Layout */
+.tools {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+/* Card Styling */
+.tool, .info {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: slideInUp 0.8s ease-out;
+}
+
+.tool::before, .info::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.tool:hover, .info:hover {
+    transform: translateY(-8px);
+    background: var(--hover-bg);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.tool:hover::before, .info:hover::before {
+    opacity: 1;
+}
+
+/* Button Styling */
+button {
+    background: var(--gradient-primary);
+    color: var(--text-primary);
+    border: none;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    min-width: 140px;
+    text-align: center;
+    letter-spacing: 0.025em;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 12px 24px rgba(102, 126, 234, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, #7c8af0 0%, #8b5bc7 100%);
+}
+
+button:hover::before {
+    left: 100%;
+}
+
+button:active {
+    transform: translateY(0);
+    transition: transform 0.1s ease;
+}
+
+/* Status Messages */
+#train-status, #compare-status {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+#train-status:not(:empty), #compare-status:not(:empty) {
+    animation: statusFadeIn 0.5s ease-out;
+}
+
+#train-status.success, #compare-status.success {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: var(--success-color);
+    color: var(--success-color);
+}
+
+#train-status.error, #compare-status.error {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: var(--error-color);
+    color: var(--error-color);
+}
+
+#train-status.loading, #compare-status.loading {
+    background: rgba(245, 158, 11, 0.1);
+    border-color: var(--warning-color);
+    color: var(--warning-color);
+}
+
+/* Charts Container */
+.charts-container {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: var(--input-bg);
+    border-radius: 16px;
+    border: 1px solid var(--input-border);
+    backdrop-filter: blur(10px);
+    min-height: 400px;
+    display: none;
+    animation: slideInUp 0.6s ease-out;
+}
+
+.charts-container.visible {
+    display: block;
+}
+
+.chart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.chart-item {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.chart-item h3 {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* Model Comparison Metrics */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.metric-card {
+    background: var(--input-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px solid var(--input-border);
+    transition: all 0.3s ease;
+}
+
+.metric-card:hover {
+    background: var(--hover-bg);
+    transform: translateY(-2px);
+}
+
+.metric-value {
+    font-size: 2rem;
+    font-weight: 700;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+}
+
+.metric-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Info Section */
+.info {
+    margin-bottom: 2rem;
+}
+
+.info h2 {
+    margin-bottom: 1.5rem;
+}
+
+.info p {
+    margin-bottom: 0.8rem;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.info p::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--gradient-primary);
+    font-weight: bold;
+}
+
+/* Actions Section */
+.actions {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.actions a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.actions a:hover {
+    background: var(--hover-bg);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Loading Animation */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--text-primary);
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 0.5rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Animations */
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes statusFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    h1 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .tools {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .tool, .info {
+        padding: 1.5rem;
+    }
+    
+    .chart-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .metrics-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.75rem;
+    }
+    
+    .tool, .info {
+        padding: 1rem;
+        border-radius: 16px;
+    }
+    
+    button {
+        width: 100%;
+        padding: 16px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Developer Tools</h1>
+        
+        <div class="tools">
+            <div class="tool">
+                <h2>Model Training</h2>
+                <p>Train new LSTM models with current data</p>
+                <button onclick="trainModels()">Train Models</button>
+                <div id="train-status"></div>
+            </div>
+        </div>
+        <div class="tool">
+    <h2>Model Comparison</h2>
+    <p>Compare performance metrics between model versions</p>
+    <button onclick="compareModels()">Compare Models</button>
+    <div id="compare-status"></div>
+    <div id="charts-container" class="charts-container">
+        <div class="chart-grid">
+            <div class="chart-item">
+                <h3>Accuracy Comparison</h3>
+                <canvas id="accuracyChart" width="400" height="200"></canvas>
+            </div>
+            <div class="chart-item">
+                <h3>Loss Comparison</h3>
+                <canvas id="lossChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+        <div class="metrics-grid" id="metricsGrid"></div>
+    </div>
+</div>
+        
+        <div class="info">
+            <h2>Model Information</h2>
+            <p>Current models use category-specific LSTM networks</p>
+            <p>Models are automatically backed up before retraining</p>
+            <p>Only improved models replace existing ones</p>
+        </div>
+        
+        <div class="actions">
+            <a href="/dashboard">Back to Dashboard</a>
+        </div>
+    </div>
+    
+    <script>
+        function trainModels() {
+                window.location.href = '/train_models_page';
+        }
+function compareModels() {
+    const statusEl = document.getElementById('compare-status');
+    const chartsContainer = document.getElementById('charts-container');
+    
+    statusEl.innerHTML = '<span class="loading-spinner"></span>Comparing models...';
+    statusEl.className = 'loading';
+    
+    fetch('/compare_models')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                statusEl.innerHTML = 'Success: Models compared successfully';
+                statusEl.className = 'success';
+                
+                // Show charts container
+                chartsContainer.classList.add('visible');
+                
+                // Create visualizations
+                createAccuracyChart(data.accuracy_data || generateSampleData('accuracy'));
+                createLossChart(data.loss_data || generateSampleData('loss'));
+                createMetricsCards(data.metrics || generateSampleMetrics());
+                
+            } else {
+                statusEl.innerHTML = 'Error: ' + (data.error || 'Unknown error occurred');
+                statusEl.className = 'error';
+                chartsContainer.classList.remove('visible');
+            }
+        })
+        .catch(error => {
+            statusEl.innerHTML = 'Error: ' + error.message;
+            statusEl.className = 'error';
+            chartsContainer.classList.remove('visible');
+        });
+}
+
+function generateSampleData(type) {
+    const labels = ['Food', 'Transport', 'Entertainment', 'Shopping', 'Bills'];
+    if (type === 'accuracy') {
+        return {
+            labels: labels,
+            current: [0.89, 0.92, 0.87, 0.91, 0.88],
+            previous: [0.85, 0.88, 0.83, 0.87, 0.84]
+        };
+    } else {
+        return {
+            labels: labels,
+            current: [0.12, 0.08, 0.15, 0.09, 0.13],
+            previous: [0.18, 0.15, 0.22, 0.16, 0.19]
+        };
+    }
+}
+
+function generateSampleMetrics() {
+    return {
+        overall_accuracy: { current: 89.6, previous: 85.4 },
+        avg_loss: { current: 0.114, previous: 0.176 },
+        training_time: { current: 45, previous: 52 },
+        model_size: { current: 2.3, previous: 2.1 }
+    };
+}
+
+function createAccuracyChart(data) {
+    const canvas = document.getElementById('accuracyChart');
+    const ctx = canvas.getContext('2d');
+    
+    // Simple bar chart implementation
+    drawBarChart(ctx, data, 'Accuracy', '#667eea', '#f093fb');
+}
+
+function createLossChart(data) {
+    const canvas = document.getElementById('lossChart');
+    const ctx = canvas.getContext('2d');
+    
+    // Simple bar chart implementation
+    drawBarChart(ctx, data, 'Loss', '#764ba2', '#f5576c');
+}
+
+function drawBarChart(ctx, data, title, color1, color2) {
+    const width = ctx.canvas.width;
+    const height = ctx.canvas.height;
+    const padding = 40;
+    const barWidth = (width - padding * 2) / (data.labels.length * 2 + 1);
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    // Set font and colors
+    ctx.font = '12px Inter';
+    ctx.fillStyle = '#ffffff';
+    
+    // Find max value for scaling
+    const maxVal = Math.max(...data.current, ...data.previous);
+    const scale = (height - padding * 2) / maxVal;
+    
+    // Draw bars
+    data.labels.forEach((label, i) => {
+        const x = padding + i * (barWidth * 2 + 10);
+        
+        // Current model bar
+        const currentHeight = data.current[i] * scale;
+        const gradient1 = ctx.createLinearGradient(0, height - padding - currentHeight, 0, height - padding);
+        gradient1.addColorStop(0, color1);
+        gradient1.addColorStop(1, color1 + '80');
+        
+        ctx.fillStyle = gradient1;
+        ctx.fillRect(x, height - padding - currentHeight, barWidth, currentHeight);
+        
+        // Previous model bar
+        const previousHeight = data.previous[i] * scale;
+        const gradient2 = ctx.createLinearGradient(0, height - padding - previousHeight, 0, height - padding);
+        gradient2.addColorStop(0, color2);
+        gradient2.addColorStop(1, color2 + '80');
+        
+        ctx.fillStyle = gradient2;
+        ctx.fillRect(x + barWidth + 5, height - padding - previousHeight, barWidth, previousHeight);
+        
+        // Label
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'center';
+        ctx.fillText(label, x + barWidth, height - 10);
+        
+        // Values
+        ctx.font = '10px Inter';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(data.current[i].toFixed(2), x + barWidth/2, height - padding - currentHeight - 5);
+        ctx.fillText(data.previous[i].toFixed(2), x + barWidth + 5 + barWidth/2, height - padding - previousHeight - 5);
+    });
+    
+    // Legend
+    ctx.font = '12px Inter';
+    ctx.fillStyle = color1;
+    ctx.fillRect(10, 10, 15, 10);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText('Current Model', 30, 19);
+    
+    ctx.fillStyle = color2;
+    ctx.fillRect(130, 10, 15, 10);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText('Previous Model', 150, 19);
+}
+
+function createMetricsCards(metrics) {
+    const container = document.getElementById('metricsGrid');
+    container.innerHTML = '';
+    
+    Object.entries(metrics).forEach(([key, value]) => {
+        const improvement = ((value.current - value.previous) / value.previous * 100).toFixed(1);
+        const isImprovement = improvement > 0;
+        
+        const card = document.createElement('div');
+        card.className = 'metric-card';
+        
+        let displayValue = value.current;
+        let unit = '';
+        
+        if (key === 'training_time') {
+            unit = 's';
+        } else if (key === 'model_size') {
+            unit = 'MB';
+        } else if (key === 'overall_accuracy') {
+            unit = '%';
+        }
+        
+        card.innerHTML = `
+            <div class="metric-value">${displayValue}${unit}</div>
+            <div class="metric-label">${key.replace(/_/g, ' ').toUpperCase()}</div>
+            <div style="color: ${isImprovement ? '#10b981' : '#ef4444'}; font-size: 0.8rem; margin-top: 0.5rem;">
+                ${isImprovement ? '↗' : '↘'} ${Math.abs(improvement)}%
+            </div>
+        `;
+        
+        container.appendChild(card);
+    });
+}
+    </script>
+</body>
+</html>

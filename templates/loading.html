@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generating Predictions - Smart Finance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+:root {
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --text-muted: rgba(255, 255, 255, 0.5);
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0a0e27;
+    min-height: 100vh;
+    overflow: hidden;
+    position: relative;
+    color: var(--text-primary);
+}
+
+/* Animated Background Shapes */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(102, 126, 234, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 60%, rgba(240, 147, 251, 0.2) 0%, transparent 50%);
+    animation: backgroundPulse 8s ease-in-out infinite alternate;
+    z-index: -2;
+}
+
+body::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: 
+        conic-gradient(from 0deg at 50% 50%, transparent, rgba(102, 126, 234, 0.1), transparent),
+        conic-gradient(from 180deg at 50% 50%, transparent, rgba(118, 75, 162, 0.1), transparent);
+    animation: rotate 20s linear infinite;
+    z-index: -1;
+}
+
+@keyframes backgroundPulse {
+    0% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Loading Container */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Brain Container */
+.brain-container {
+    position: relative;
+    margin-bottom: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.brain {
+    width: 120px;
+    height: 120px;
+    background: var(--primary-gradient);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    position: relative;
+    animation: brainPulse 2s ease-in-out infinite;
+    box-shadow: 
+        0 0 40px rgba(102, 126, 234, 0.4),
+        inset 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.brain::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    animation: brainGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes brainPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@keyframes brainGlow {
+    0% { opacity: 0.3; }
+    100% { opacity: 0.8; }
+}
+
+/* Neural Network */
+.neural-network {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.neuron {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: var(--secondary-gradient);
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(240, 147, 251, 0.6);
+    animation: neuronPulse 1.5s ease-in-out infinite;
+}
+
+.neuron:nth-child(1) {
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation-delay: 0s;
+}
+
+.neuron:nth-child(2) {
+    top: 60px;
+    left: 20px;
+    animation-delay: 0.3s;
+}
+
+.neuron:nth-child(3) {
+    top: 60px;
+    right: 20px;
+    animation-delay: 0.6s;
+}
+
+.neuron:nth-child(4) {
+    bottom: 60px;
+    left: 30px;
+    animation-delay: 0.9s;
+}
+
+.neuron:nth-child(5) {
+    bottom: 60px;
+    right: 30px;
+    animation-delay: 1.2s;
+}
+
+@keyframes neuronPulse {
+    0%, 100% { 
+        transform: scale(1);
+        opacity: 0.6;
+    }
+    50% { 
+        transform: scale(1.3);
+        opacity: 1;
+    }
+}
+
+.connection {
+    position: absolute;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(240, 147, 251, 0.3), rgba(245, 87, 108, 0.3));
+    animation: connectionFlow 2s ease-in-out infinite;
+}
+
+.connection:nth-child(6) {
+    top: 32px;
+    left: 50%;
+    width: 40px;
+    transform: translateX(-50%) rotate(-30deg);
+    animation-delay: 0.5s;
+}
+
+.connection:nth-child(7) {
+    top: 32px;
+    left: 50%;
+    width: 40px;
+    transform: translateX(-50%) rotate(30deg);
+    animation-delay: 1s;
+}
+
+.connection:nth-child(8) {
+    bottom: 72px;
+    left: 50%;
+    width: 60px;
+    transform: translateX(-50%);
+    animation-delay: 1.5s;
+}
+
+@keyframes connectionFlow {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+/* Typography */
+.main-text {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    animation: textGlow 3s ease-in-out infinite alternate;
+}
+
+.sub-text {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    margin-bottom: 3rem;
+    text-align: center;
+    font-weight: 400;
+}
+
+@keyframes textGlow {
+    0% { filter: brightness(1); }
+    100% { filter: brightness(1.2); }
+}
+
+/* Progress Bar */
+.progress-bar {
+    width: 100%;
+    max-width: 400px;
+    height: 8px;
+    background: var(--glass-bg);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--primary-gradient);
+    border-radius: 20px;
+    width: 0%;
+    animation: progressFill 5s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: progressShimmer 2s ease-in-out infinite;
+}
+
+@keyframes progressFill {
+    0% { width: 0%; }
+    100% { width: 100%; }
+}
+
+@keyframes progressShimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Status Text */
+.status {
+    font-size: 1rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 2rem;
+    font-weight: 400;
+    min-height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.status::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: var(--secondary-gradient);
+    border-radius: 50%;
+    animation: statusBlink 1s ease-in-out infinite;
+}
+
+@keyframes statusBlink {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+/* Floating Icons */
+.floating-icons {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.icon {
+    position: absolute;
+    font-size: 2rem;
+    color: var(--text-muted);
+    animation: float 6s ease-in-out infinite;
+}
+
+.icon:nth-child(1) {
+    top: 20%;
+    left: 15%;
+    animation-delay: 0s;
+    color: rgba(102, 126, 234, 0.3);
+}
+
+.icon:nth-child(2) {
+    top: 60%;
+    right: 20%;
+    animation-delay: 1.5s;
+    color: rgba(240, 147, 251, 0.3);
+}
+
+.icon:nth-child(3) {
+    bottom: 30%;
+    left: 20%;
+    animation-delay: 3s;
+    color: rgba(245, 87, 108, 0.3);
+}
+
+.icon:nth-child(4) {
+    top: 30%;
+    right: 15%;
+    animation-delay: 4.5s;
+    color: rgba(118, 75, 162, 0.3);
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.3;
+    }
+    25% {
+        transform: translateY(-20px) rotate(90deg);
+        opacity: 0.6;
+    }
+    50% {
+        transform: translateY(-40px) rotate(180deg);
+        opacity: 1;
+    }
+    75% {
+        transform: translateY(-20px) rotate(270deg);
+        opacity: 0.6;
+    }
+}
+
+/* Glass Card Effect */
+.loading-container::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 600px;
+    height: 80%;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    backdrop-filter: blur(20px);
+    z-index: -1;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .loading-container {
+        padding: 1rem;
+    }
+    
+    .brain {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .neural-network {
+        width: 160px;
+        height: 160px;
+    }
+    
+    .main-text {
+        font-size: 2rem;
+    }
+    
+    .sub-text {
+        font-size: 1rem;
+    }
+    
+    .progress-bar {
+        max-width: 300px;
+    }
+    
+    .icon {
+        font-size: 1.5rem;
+    }
+    
+    .loading-container::before {
+        width: 95%;
+        height: 85%;
+    }
+}
+
+@media (max-width: 480px) {
+    .brain {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .neural-network {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .main-text {
+        font-size: 1.75rem;
+    }
+    
+    .progress-bar {
+        max-width: 280px;
+        height: 6px;
+    }
+    
+    .neuron {
+        width: 10px;
+        height: 10px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="loading-container">
+        <div class="brain-container">
+            <div class="brain"></div>
+            <div class="neural-network">
+                <div class="neuron"></div>
+                <div class="neuron"></div>
+                <div class="neuron"></div>
+                <div class="neuron"></div>
+                <div class="neuron"></div>
+                <div class="connection"></div>
+                <div class="connection"></div>
+                <div class="connection"></div>
+            </div>
+        </div>
+
+        <div class="main-text">AI Processing</div>
+        <div class="sub-text">Analyzing your financial patterns</div>
+
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+
+        <div class="status" id="status-text">Initializing neural networks...</div>
+
+        <div class="floating-icons">
+            <div class="icon">₹</div>
+            <div class="icon">📊</div>
+            <div class="icon">💡</div>
+            <div class="icon">🔮</div>
+        </div>
+    </div>
+
+<script>
+    const statusMessages = [
+        "Initializing neural networks...",
+        "Loading transaction data...",
+        "Training prediction models...",
+        "Analyzing spending patterns...",
+        "Detecting anomalies...",
+        "Calculating confidence scores...",
+        "Generating budget alerts...",
+        "Computing health score...",
+        "Finalizing recommendations..."
+    ];
+
+    let messageIndex = 0;
+    const statusElement = document.getElementById('status-text');
+
+    function updateStatus() {
+        statusElement.style.opacity = '0';
+        setTimeout(() => {
+            statusElement.textContent = statusMessages[messageIndex];
+            statusElement.style.opacity = '1';
+            messageIndex = (messageIndex + 1) % statusMessages.length;
+        }, 300);
+    }
+
+    // Add smooth transition for status updates
+    statusElement.style.transition = 'opacity 0.3s ease-in-out';
+
+    // Start status updates
+    setInterval(updateStatus, 2000);
+
+    // Enhanced progress animation
+    const progressFill = document.querySelector('.progress-fill');
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+        if (progress < 100) {
+            progress += Math.random() * 15 + 5;
+            if (progress > 100) progress = 100;
+            progressFill.style.width = progress + '%';
+        }
+    }, 400);
+
+    // Auto-redirect after 5 seconds
+    setTimeout(() => {
+        clearInterval(progressInterval);
+        progressFill.style.width = '100%';
+        setTimeout(() => {
+            window.location.href = '/predict_process';
+        }, 500);
+    }, 4500);
+
+    // Add floating particles effect
+    function createParticle() {
+        const particle = document.createElement('div');
+        particle.style.cssText = `
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(102, 126, 234, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+            left: ${Math.random() * 100}%;
+            top: 100%;
+            animation: particleFloat ${Math.random() * 3 + 2}s linear forwards;
+        `;
+        document.body.appendChild(particle);
+        
+        setTimeout(() => {
+            particle.remove();
+        }, 5000);
+    }
+
+    // Add CSS for particle animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes particleFloat {
+            to {
+                transform: translateY(-100vh) translateX(${Math.random() * 200 - 100}px);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Create particles periodically
+    setInterval(createParticle, 800);
+</script>
+</body>
+</html>

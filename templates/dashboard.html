@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard - Smart Finance Tracker</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+:root {
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-muted: rgba(255, 255, 255, 0.5);
+  --bg-primary: #0a0e27;
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --card-bg: rgba(255, 255, 255, 0.08);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --input-bg: rgba(255, 255, 255, 0.05);
+  --input-border: rgba(255, 255, 255, 0.1);
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Animated background shapes */
+body::before {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(240, 147, 251, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
+  animation: float 20s ease-in-out infinite;
+  z-index: -1;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(30px, -30px) rotate(120deg); }
+  66% { transform: translate(-20px, 20px) rotate(240deg); }
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Typography */
+h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+  margin-bottom: 2rem;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  background: var(--gradient-secondary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+p {
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+}
+
+/* Messages */
+.messages {
+  margin-bottom: 2rem;
+}
+
+.message {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Actions Section */
+.actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+/* Buttons */
+.btn, button, input[type="submit"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before, button::before, input[type="submit"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.btn:hover, button:hover, input[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn:hover::before, button:hover::before, input[type="submit"]:hover::before {
+  opacity: 0.1;
+}
+
+.btn:active, button:active, input[type="submit"]:active {
+  transform: translateY(0);
+}
+
+/* Special button styles */
+.btn[href="/add_transaction"]::before { content: '\f067'; font-family: 'Font Awesome 6 Free'; font-weight: 900; margin-right: 0.5rem; }
+.btn[href="/set_budget"]::before { content: '\f3d1'; font-family: 'Font Awesome 6 Free'; font-weight: 900; margin-right: 0.5rem; }
+.btn[href="/view_transactions"]::before { content: '\f0ca'; font-family: 'Font Awesome 6 Free'; font-weight: 900; margin-right: 0.5rem; }
+.btn[href="/load_demo"]::before { content: '\f1c0'; font-family: 'Font Awesome 6 Free'; font-weight: 900; margin-right: 0.5rem; }
+.btn[href="/predict_loading"]::before { content: '\f200'; font-family: 'Font Awesome 6 Free'; font-weight: 900; margin-right: 0.5rem; }
+.btn[href="/developer"]::before { content: '\f121'; font-family: 'Font Awesome 6 Free'; font-weight: 900; margin-right: 0.5rem; }
+.btn[href="/logout"]::before { content: '\f2f5'; font-family: 'Font Awesome 6 Free'; font-weight: 900; margin-right: 0.5rem; }
+
+/* Upload form */
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  grid-column: span 2;
+}
+
+input[type="file"] {
+  background: var(--input-bg);
+  border: 2px dashed var(--input-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  color: var(--text-secondary);
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+input[type="file"]:hover {
+  border-color: rgba(102, 126, 234, 0.5);
+  background: rgba(102, 126, 234, 0.05);
+}
+
+input[type="file"]:focus {
+  outline: none;
+  border-color: rgba(102, 126, 234, 0.8);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Data Summary Card */
+.data-summary {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.data-summary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--gradient-primary);
+  opacity: 0.5;
+}
+
+/* Table Styles */
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.summary-table th {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  font-weight: 600;
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--card-border);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.summary-table td {
+  padding: 1rem;
+  color: var(--text-secondary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.summary-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-primary);
+}
+
+.summary-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Amount styling */
+.summary-table td:nth-child(3),
+.summary-table td:nth-child(4) {
+  font-weight: 600;
+  font-family: 'SF Mono', Monaco, monospace;
+}
+
+/* Requirements Section */
+.requirements {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.requirements::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--gradient-secondary);
+  opacity: 0.5;
+}
+
+.requirements p {
+  margin-bottom: 0.5rem;
+}
+
+.requirements p:last-child {
+  margin-bottom: 0;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* Clear data button special styling */
+button[onclick*="confirm"] {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+button[onclick*="confirm"]:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  .actions {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .upload-form {
+    grid-column: span 1;
+  }
+  
+  .summary-table {
+    font-size: 0.875rem;
+  }
+  
+  .summary-table th,
+  .summary-table td {
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .data-summary,
+  .requirements {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0.75rem;
+  }
+  
+  h1 {
+    font-size: 1.75rem;
+  }
+  
+  .btn, button, input[type="submit"] {
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+  }
+  
+  .summary-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+</style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dashboard</h1>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="message">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <div class="actions">
+            {% if not demo_mode %}
+                <form method="POST" action="/upload_csv" enctype="multipart/form-data" class="upload-form">
+                    <input type="file" name="file" accept=".csv" required>
+                    <button type="submit">Upload CSV</button>
+                </form>
+            {% endif %}
+            
+            <a href="/add_transaction" class="btn">Add Transaction</a>
+            <a href="/set_budget" class="btn">Set Budget</a>
+            <a href="/view_transactions" class="btn">View Transactions</a>
+            <a href="/load_demo">Load Demo Data</a>
+            <a href="/predict_loading">Generate Predictions</a>
+            <a href="/developer">Developer Tools</a>
+            
+            {% if not demo_mode %}
+                <form method="POST" action="/clear_data" style="display: inline;">
+                    <button type="submit" onclick="return confirm('Clear all data?')">Clear Data</button>
+                </form>
+            {% endif %}
+            
+            <a href="/logout">Logout</a>
+        </div>
+        
+        <div class="data-summary">
+            <h2>Data Summary</h2>
+            {% if summary %}
+                <table class="summary-table">
+                    <tr>
+                        <th>Category</th>
+                        <th>Transactions</th>
+                        <th>Total</th>
+                        <th>Average</th>
+                    </tr>
+                    {% for category, data in summary.items() %}
+                        <tr>
+                            <td>{{ category }}</td>
+                            <td>{{ data.count }}</td>
+                            <td>₹{{ "%.2f"|format(data.total) }}</td>
+                            <td>₹{{ "%.2f"|format(data.avg) }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <p>No data available. Upload CSV or load demo data.</p>
+            {% endif %}
+        </div>
+        
+        <div class="requirements">
+            <h3>CSV Format Requirements</h3>
+            <p>Your CSV must contain columns: Date, Category, Amount</p>
+            <p>Categories: {{ ", ".join(['Bills & Utilities', 'Education', 'Entertainment', 'Food & Dining', 'health & Medical', 'Shopping', 'Travel & Transportation']) }}</p>
+        </div>
+    </div>
+</body>
+</html>
